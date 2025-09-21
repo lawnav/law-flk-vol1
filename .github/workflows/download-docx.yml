@@ -12,13 +12,15 @@ on:
 jobs:
   process:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     permissions:
       contents: write
     env:
-      USER: qundao
-      SRC_NAME: law-meta
+      USER: ${{ github.repository_owner }}
+      # REPO_NAME: ${{ github.event.repository.name }}
+      REPO_NAME: ${{ secrets.REPO }}
+      SRC_NAME: source
       COUNT: 50
 
     steps:
@@ -27,7 +29,7 @@ jobs:
       - name: Checkout src repo
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.USER }}/${{ env.SRC_NAME }}
+          repository: ${{ env.USER }}/${{ env.REPO_NAME }}
           token: ${{ secrets.GH_TOKEN }}
           path: ${{ env.SRC_NAME }}
           fetch-depth: 1
@@ -47,17 +49,9 @@ jobs:
       - name: Run download Docx
         # if: github.event.schedule == '5 */12 * * *'
         run: |
-          count=${{ env.COUNT }}
-          echo "Update count = $count"
-          pushd ${{ env.SRC_NAME }} && 
-          bash scripts/run-docx.sh v1 $count &&
-          popd
-
-      - name: Run download PDF
-        run: |
-          count=${{ env.COUNT }}
-          pushd ${{ env.SRC_NAME }} && 
-          bash scripts/run-pdf.sh v1 $count &&
+          echo "Update count = $COUNT"
+          pushd ${SRC_NAME} && 
+          bash scripts/run-docx.sh v1 $COUNT &&
           popd
 
       - name: Git auto commit
