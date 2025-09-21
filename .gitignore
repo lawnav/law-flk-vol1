@@ -16,11 +16,13 @@ temp-*/
 data/
 text/
 law-*/
+source/
 
 *.txt
 *.csv
 *.tsv
 *.md
+*.pdf
 
 *.json
 !records.json
